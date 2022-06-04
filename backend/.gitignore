@@ -1,0 +1,16 @@
+.env
+*.sqlite3
+*.pyc
+token.txt
+
+# Only for Development only
+**/migrations/**
+env/
+media/
+cache/
+dump.rdb
+celerybeat*
+staticfiles
+cert.crt
+cert.key
+staticfiles/*

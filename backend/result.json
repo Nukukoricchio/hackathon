@@ -1,0 +1,92 @@
+{
+  "status": {
+    "ok": true,
+    "message": ""
+  },
+  "info_name": "HOANG QUOC HAO",
+  "info_birthdate": "20/04/1998",
+  "info_gender": "Male",
+  "info_email": "haok61bkhn@gmail.com",
+  "info_phone": "0336554550",
+  "info_location_1": "11 Dai Linh, Nam Tu Liem, Ha Noi",
+  "info_location_2": "",
+  "exp_period": "9/2019 - 11/2019",
+  "exp_company_name": "VNP Company",
+  "experience": [
+    {
+      "exp_period": "9/2019 - 11/2019",
+      "exp_company_name": "VNP Company",
+      "normalized_period": {
+        "start": "09/2019",
+        "end": "11/2019"
+      }
+    },
+    {
+      "exp_period": "2/2019 - 8/2019",
+      "exp_company_name": "VCCorp Company",
+      "normalized_period": {
+        "start": "02/2019",
+        "end": "08/2019"
+      }
+    },
+    {
+      "exp_period": "10/2018 - Now",
+      "exp_position": "Computer Science Lab Research assistant",
+      "normalized_period": {
+        "start": "04/06/2022",
+        "end": ""
+      }
+    },
+    {
+      "exp_period": "2/2020 - 1/2021",
+      "exp_company_name": "HTI Company",
+      "exp_position": "AI Team Leader",
+      "normalized_period": {
+        "start": "02/2020",
+        "end": "01/2021"
+      }
+    },
+    {
+      "exp_period": "1/2021 - Now",
+      "exp_company_name": "IcommVN Company",
+      "exp_position": "RnD AI engineer",
+      "normalized_period": {
+        "start": "04/06/2022",
+        "end": ""
+      }
+    }
+  ],
+  "exp_confident": "high",
+  "edu_school_univ": "Hanoi University of Science and Technology",
+  "edu_major": "Information Technology - Computer science",
+  "education": [
+    {
+      "edu_school_univ": "Hanoi University of Science and Technology",
+      "edu_major": "Information Technology - Computer science"
+    },
+    {
+      "edu_school_univ": "Hanoi University of Science and Technology",
+      "edu_period": "2017 - Third Prize",
+      "normalized_period": {
+        "start": "2017",
+        "end": ""
+      }
+    },
+    {
+      "edu_school_univ": "Hanoi University of Science and Technology",
+      "edu_period": "2018 - Second Prize",
+      "normalized_period": {
+        "start": "2018",
+        "end": ""
+      }
+    },
+    {
+      "edu_school_univ": "Hanoi University of Science and Technology"
+    }
+  ],
+  "others_education": "Hanoi University of Science and Technology\nInformation Technology\n- Computer science major\nREWARD RECEIVED\n2015 - 2nd Prize in Informatics Province 12 (exceeding level exam)\n- Provincial valedictorian 11 2016 - Second prize in Informatics Province 12 2017 - Olympic consolation prize at Hanoi University of Science and Technology 2017 - Third Prize at Hanoi University of Science and\nTechnology 2018 - Second Prize at Hanoi University of Science and\nTechnology 2019 - Participated in the ACM/ICPC ASIA Ha Noi programming competition\n2020 - Third prize of products at BKHN school's innovation contest",
+  "others_career_objective": "- My passion for technology is proven by the products I've made and the awards I've won.\n- I would like to work in a company specializing in Artificial Intelligence so that I can further develop my abilities and bring more value to the company.",
+  "others_skills": "- Use proficiently Pascal, C, C++, Java, C#, Python programming languages\nPRODUCTS\n- Web Programming (HTML,CSS,JS,JQ)\n- AI programming (mainly computer vision)\n(C++,Python)\n- Deployment AI code (Deepstream , triton,\nrabitMQ, elasticsearch, NCNN,...)",
+  "others_profile": "Date of birth: 20/04/1998 Gender: Male Phone number: 0336554550  Email: haok61bkhn@gmail.com\nWebsite:\nhttps://www.facebook.com/hoangquoc.hao\nAddress: 11 Dai Linh, Nam Tu Liem, Ha Noi\n+ Recognition of license plates\n+ Documentation on algorithms on graphs\n+ Face detection (2D and 3D) + Facial emotion recognition\n+ Smart garage\n+ Face attendance system for online learning\n+ Apply facial recognition on the device used on the rice atm tree\n+ Identification of personal documents\n+ Restore and clarify license plates\n+ The system of tracking people and vehicles combines identification of human attributes (masks, hats, bags ...) , vehicles (car color,car brand...)\n+ Some optimization problems on device ( jetson ) + Signature recognition\n+ Video summary problem system\n+ Face antispoofing problem",
+  "info_normalized_birthdate": "20/04/1998"
+}
