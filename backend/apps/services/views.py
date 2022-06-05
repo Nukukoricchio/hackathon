@@ -5,11 +5,13 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
 
-from .models import Office, Position, Criteria
-from .serializers import OfficeSerializer, PositionListSerializer, PositionDetailSerializer, CriteriaSerializer
+from .models import Office, Position, Criteria, Department
+from .serializers import OfficeSerializer, PositionListSerializer, \
+                        PositionDetailSerializer, CriteriaSerializer, DepartmentSerializer
 
 
 class OfficeListView(generics.ListCreateAPIView):
+	permission_classes = [AllowAny]
 	queryset = Office.objects.all()
 	serializer_class = OfficeSerializer
 
@@ -17,6 +19,16 @@ class OfficeListView(generics.ListCreateAPIView):
 class OfficeDetailView(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Office.objects.all()
 	serializer_class = OfficeSerializer
+
+
+class DepartmentListView(generics.ListCreateAPIView):
+	queryset = Department.objects.all()
+	serializer_class = DepartmentSerializer
+
+
+class DepartmentDetailView(generics.RetrieveUpdateDestroyAPIView):
+	queryset = Department.objects.all()
+	serializer_class = DepartmentSerializer
 
 
 class PositionListView(generics.ListCreateAPIView):

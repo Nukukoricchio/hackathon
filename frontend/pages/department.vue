@@ -41,7 +41,7 @@
             <!-- Table -->
             <div class="table-responsive mb-0">
               <b-table
-                :items="positionList"
+                :items="departmentList"
                 :fields="fields"
                 responsive="sm"
                 :per-page="perPage"
@@ -53,7 +53,7 @@
                 @filtered="onFiltered"
               > 
                 <template v-slot:cell(id)="data">
-                  <nuxt-link :to="'/position/' + data.item.id" class="text-body">{{ data.index + 1 }}</nuxt-link>
+                  <span class="text-body">{{ data.index + 1 }}</span>
                 </template>
                 <template v-slot:cell(action)="data">
                   <ul class="list-inline mb-0">
@@ -66,7 +66,7 @@
                         <i
                           v-b-modal.modal-edit
                           class="fas fa-edit font-size-18"
-                          @click="getCurrentPosition(data.item)"
+                          @click="getCurrentDepartment(data.item)"
                         ></i>
                       </span>
                     </li>
@@ -77,7 +77,7 @@
                         title="Xóa"
                       >
                         <i v-b-modal.modal-delete class="fas fa-trash-alt font-size-18"
-                        @click="getCurrentPosition(data.item)"></i>
+                        @click="getCurrentDepartment(data.item)"></i>
                       </span>
                     </li>
                   </ul>
@@ -106,7 +106,7 @@
     </div>
     <b-modal
       id="modal-add"
-      title="Thêm chân dung ứng viên"
+      title="Thêm phòng ban"
       title-class="font-18"
       @show="resetAddModal"
       @ok="handleAddOK"
@@ -122,28 +122,25 @@
                 <div class="outer">
                   <div class="outer">
                     <div class="mb-3">
-                      <label class="mt-3">Phòng ban tuyển dụng:</label>
-                      <multiselect v-model="newAddPosition.department" :options="departmentOptions"></multiselect>
-                    </div>
-                    <div class="mb-3">
-                      <label for="formname">Vị trí tuyển dụng:</label>
+                      <label for="formname">Tên phòng ban:</label>
                       <input
                         id="formname"
                         type="text"
                         class="form-control"
-                        placeholder="Vị trí tuyển dụng ..."
-                        v-model="newAddPosition.name"
+                        placeholder="Nhập tên phòng ban ..."
+                        v-model="newAddDepartment.name"
                         required
                       />
                     </div>
+
                     <div class="mb-3">
                       <label for="formmessage">Mô tả:</label>
                       <textarea
                         id="formmessage"
                         class="form-control"
-                        placeholder="Mô tả ..."
+                        placeholder="Nhập mô tả ..."
                         rows="3"
-                        v-model="newAddPosition.description"
+                        v-model="newAddDepartment.description"
                       ></textarea>
                     </div>
                   </div>
@@ -176,12 +173,13 @@
                 <div class="outer">
                   <div class="outer">
                     <div class="mb-3">
-                      <label for="formname">Vị trí tuyển dụng:</label>
+                      <label for="formname">Tên phòng ban:</label>
                       <input
                         id="formname"
                         type="text"
                         class="form-control"
-                        v-model="newEditPosition.name"
+                        placeholder="Cập nhật tên phòng ban ..."
+                        v-model="newEditDepartment.name"
                         required
                       />
                     </div>
@@ -191,8 +189,9 @@
                       <textarea
                         id="formmessage"
                         class="form-control"
+                        placeholder="Cập nhật mô tả ..."
                         rows="3"
-                        v-model="newEditPosition.description"
+                        v-model="newEditDepartment.description"
                       ></textarea>
                     </div>
                   </div>
@@ -216,24 +215,18 @@
 </template>
 
 <script>
-import Multiselect from "vue-multiselect";
-import "vue-multiselect/dist/vue-multiselect.min.css";
-
 export default {
   head() {
     return {
       title: `${this.title} | Yody`,
     };
   },
-  components: {
-    Multiselect
-  },
   data() {
     return {
-      title: "Chân dung ứng viên",
+      title: "Phòng ban",
       items: [
         {
-          text: "Chân dung ứng viên",
+          text: "Phòng ban",
           href: "/",
         },
         {
@@ -241,7 +234,7 @@ export default {
           active: true,
         },
       ],
-      positionList: [],
+      departmentList: [],
       totalRows: 1,
       currentPage: 1,
       perPage: 10,
@@ -254,14 +247,11 @@ export default {
         {
           key: "id",
           label: "STT",
-        },
-        {
-          key: 'department_name',
-          label: 'Phòng ban'
+          sortable: true,
         },
         {
           key: "name",
-          label: 'Vị trí tuyển dụng'
+          label: 'Tên phòng ban'
         },
         {
           key: "description",
@@ -280,26 +270,23 @@ export default {
           label: 'Tác vụ'
         }
       ],
-      departmentOptions: [],
-      departmentToId: {},
-      currentOffice: null,
-      newAddPosition: {
+      currentDepartment: null,
+      newAddDepartment: {
         name: "",
         description: "",
-        department: null,
       },
-      newEditPosition: {
+      newEditDepartment: {
         name: "",
         description: "",
       },
     };
   },
   async created() {
-    await this.getPosition();
+    await this.getDepartment();
   },
   computed: {
     rows() {
-      return this.positionList.length;
+      return this.departmentList.length;
     },
   },
   mounted() {
@@ -312,19 +299,16 @@ export default {
       this.totalRows = filteredItems.length;
       this.currentPage = 1;
     },
-    getCurrentPosition(item) {
-      this.currentPosition = item;
+    getCurrentDepartment(item) {
+      this.currentDepartment = item;
     },
-    async resetAddModal() {
-      await this.getOptions()
-
-      this.newAddPosition.name = "";
-      this.newAddPosition.description = "";
-      this.newAddPosition.department = this.departmentOptions[0]
+    resetAddModal() {
+      this.newAddDepartment.name = "";
+      this.newAddDepartment.description = "";
     },
     resetEditModal() {
-      this.newEditPosition.name = this.currentPosition.name;
-      this.newEditPosition.description = this.currentPosition.description;
+      this.newEditDepartment.name = this.currentDepartment.name;
+      this.newEditDepartment.description = this.currentDepartment.description;
     },
     async handleAddOK(bvModalEvt) {
       // Prevent modal from closing
@@ -346,22 +330,17 @@ export default {
     },
     async handleAddSubmit() {
       try {
-        let data = {
-          name: this.newAddPosition.name,
-          description: this.newAddPosition.description,
-          department: this.departmentToId[this.newAddPosition.department]
-        }
         await this.$axios.post(
-          "/api/services/position/",
-          data
+          "/api/services/department/",
+          this.newAddDepartment
         );
 
         // Hide the modal munally
         this.$nextTick(() => {
           this.$bvModal.hide("modal-add");
         });
-        await this.getPosition();
-        this.$toast.success("Tạo mới chân dung ứng viên thành công!", {
+        await this.getDepartment();
+        this.$toast.success("Tạo phòng ban thành công!", {
           icon: 'check'
         });
       } catch (error) {
@@ -382,15 +361,15 @@ export default {
     },
     async handleEditSubmit() {
       try {
-        let url = "/api/services/position/" + this.currentPosition.id + "/";
-        await this.$axios.patch(url, this.newEditPosition);
+        let url = "/api/services/department/" + this.currentDepartment.id + "/";
+        await this.$axios.patch(url, this.newEditDepartment);
 
         // Hide the modal munally
         this.$nextTick(() => {
           this.$bvModal.hide("modal-edit");
         });
-        await this.getPosition();
-        this.$toast.success("Cập nhật chân dung ứng viên thành công!", {
+        await this.getDepartment();
+        this.$toast.success("Cập nhật phòng ban thành công!", {
           icon: 'check'
         });
       } catch (error) {
@@ -411,14 +390,14 @@ export default {
     },
     async handleDeleteSubmit() {
       try {
-        let url = "/api/services/position/" + this.currentPosition.id + "/";
+        let url = "/api/services/department/" + this.currentDepartment.id + "/";
         await this.$axios.delete(url);
 
         // Hide the modal munally
         this.$nextTick(() => {
           this.$bvModal.hide("modal-delete");
         });
-        await this.getPosition();
+        await this.getDepartment();
         this.$toast.success("Đã xóa thành công!", {
           icon: 'check'
         });
@@ -438,35 +417,10 @@ export default {
         }
       }
     },
-    async getOptions() {
+    async getDepartment() {
       try {
-        this.departmentOptions = []
-        this.departmentToId = {}
-        let response = await this.$axios.get("/api/services/department/");
-        for (let d of response.data) {
-          this.departmentOptions.push(d.name)
-          this.departmentToId[d.name] = d.id
-        }
-      } catch (error) {
-        if (error.response.status == 400) {
-          let errors = error.response.data;
-          // Toast errors
-          for (let err in errors) {
-            this.$toast.error(err + " : " + errors[err], {
-              icon: 'alert'
-            });
-          }
-        } else {
-          this.$toast.error('Đã có lỗi xảy ra', {
-            icon: 'alert'
-          })
-        }
-      }
-    },
-    async getPosition() {
-      try {
-        let reponse = await this.$axios.get("/api/services/position/");
-        this.positionList = reponse.data;
+        let reponse = await this.$axios.get("/api/services/department/");
+        this.departmentList = reponse.data;
       } catch (error) {
         if (error.response.status == 400) {
           let errors = error.response.data;

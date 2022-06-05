@@ -24,17 +24,32 @@
           ></multiselect>
         </div>
       </div>
-      <!-- <div class="col">
+      <div class="col">
         <div class="mb-3">
-          <label>Trạng thái:</label>
+          <label for="formposition">Tiêu chí khác:</label>
           <multiselect
             id="formposition"
-            v-model="state"
-            :options="['Đã duyệt', 'Chưa duyệt']"
+            :options="[]"
             class="helo"
           ></multiselect>
         </div>
-      </div> -->
+      </div>
+      <div class="col">
+        <div class="mb-3">
+          <label for="cccd_date">Thời gian:</label>
+          <b-form-datepicker
+            id="cccd_date"
+            :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+            locale="vi"
+            v-model="date"
+          ></b-form-datepicker>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mb-3 mt-2">
+      <b-button variant="outline-primary" size="sm" @click="getData"
+        >Tìm kiếm</b-button
+      >
     </div>
     <div class="row">
       <div class="col-12">
@@ -119,6 +134,16 @@
                   <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                       <span
+                        class="px-2 text-success"
+                        v-b-tooltip.hover
+                        title="Duyệt hồ sơ ứng viên"
+                      >
+                        <i v-b-modal.modal-approve class="fas fa-user-check font-size-18"
+                        @click="getCurrentCandidate(data.item)"></i>
+                      </span>
+                    </li>
+                    <li class="list-inline-item">
+                      <span
                         class="px-2 text-danger"
                         v-b-tooltip.hover
                         title="Xóa hồ sơ ứng viên"
@@ -191,7 +216,6 @@ export default {
       position: null,
       positionOptions: [],
       date: null,
-      state: null,
       candidateList: [],
       totalRows: 1,
       currentPage: 1,
@@ -255,7 +279,7 @@ export default {
     };
   },
   async created() {
-    await this.getCandidate();
+    await this.getOptions();
   },
   computed: {
     /**
@@ -268,6 +292,42 @@ export default {
   mounted() {
     // Set the initial number of items
     this.totalRows = this.items.length;
+  },
+  watch: {
+    async department() {
+      if (this.department) {
+        try {
+          this.position = null;
+          this.positionOptions = [];
+          console.log('dcm', this.departmentToId[this.department])
+          let response = await this.$axios.get(
+            "/api/services/department/" + this.departmentToId[this.department] + "/"
+          );
+          console.log('data', response.data)
+          for (let item of response.data.positions) {
+            this.positionOptions.push(item.name);
+          }
+          if (this.positionOptions.length > 0) this.position = this.positionOptions[0]
+        } catch (error) {
+          if (error.response.status == 400) {
+            let errors = error.response.data;
+            // Toast errors
+            for (let err in errors) {
+              this.$toast.error(err + " : " + errors[err], {
+                icon: "alert",
+              });
+            }
+          } else {
+            this.$toast.error("Đã có lỗi xảy ra", {
+              icon: "alert",
+            });
+          }
+        }
+      } else {
+        this.position = null;
+        this.positionOptions = [];
+      }
+    },
   },
   methods: {
     /**
@@ -432,6 +492,32 @@ export default {
           this.$toast.error('Đã có lỗi xảy ra', {
             icon: 'alert'
           })
+        }
+      }
+    },
+    async getOptions() {
+      try {
+        this.departmentOptions = []
+        this.departmentToId = {}
+        let response = await this.$axios.get('/api/services/department/')
+        for (let item of response.data) {
+          this.departmentOptions.push(item.name)
+          this.departmentToId[item.name] = item.id
+        }
+        this.department = this.departmentOptions[0]
+      } catch (error) {
+        if (error.response.status == 400) {
+          let errors = error.response.data;
+          // Toast errors
+          for (let err in errors) {
+            this.$toast.error(err + " : " + errors[err], {
+              icon: "alert",
+            });
+          }
+        } else {
+          this.$toast.error("Đã có lỗi xảy ra", {
+            icon: "alert",
+          });
         }
       }
     },

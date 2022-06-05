@@ -6,10 +6,12 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import Candidate, CvFile
 from .extractors import extract
 from .base64_to_img import decode_design_image
+from .preprocessing import preprocessing
 
 
 def process_cv(file):
 	extract_info = extract(file)
+	extract_info = preprocessing(extract_info)
 	info_email = extract_info.get('info_email', '')
 	info_picture = extract_info.get('info_picture', '')
 	info_name = extract_info.get('info_name', '')

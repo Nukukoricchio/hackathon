@@ -123,14 +123,27 @@
                 <div class="outer">
                   <div class="outer">
                     <div class="mb-3">
-                      <label for="formmessage">Tiêu chí:</label>
-                      <textarea
-                        id="formmessage"
+                      <label for="formname">Tên tiêu chí:</label>
+                      <multiselect v-model="newAddCriteria.name" :options="nameOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label>Mức độ ưu tiên:</label>
+                      <multiselect v-model="newAddCriteria.priority" :options="priorityOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label>Loại tiêu chí:</label>
+                      <multiselect v-model="newAddCriteria.kind" :options="kindOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label for="formname">Nội dung tiêu chí:</label>
+                      <small style="display:block; color: red">{{ content }}</small>
+                      <input
+                        id="formname"
+                        type="text"
                         class="form-control"
-                        rows="3"
-                        placeholder="Nhập mô tả về tiêu chí ..."
-                        v-model="newAddCriteria.rule"
-                      ></textarea>
+                        v-model="newAddCriteria.content"
+                        required
+                      />
                     </div>
                   </div>
                 </div>
@@ -162,14 +175,27 @@
                 <div class="outer">
                   <div class="outer">
                     <div class="mb-3">
-                      <label for="formmessage">Tiêu chí:</label>
-                      <textarea
-                        id="formmessage"
+                      <label for="formname">Tên tiêu chí:</label>
+                      <multiselect v-model="newEditCriteria.name" :options="nameOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label>Mức độ ưu tiên:</label>
+                      <multiselect v-model="newEditCriteria.priority" :options="priorityOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label>Loại tiêu chí:</label>
+                      <multiselect v-model="newEditCriteria.kind" :options="kindOptions"></multiselect>
+                    </div>
+                    <div class="mb-3">
+                      <label for="formname">Nội dung tiêu chí:</label>
+                      <small style="display:block; color: red">{{ content }}</small>
+                      <input
+                        id="formname"
+                        type="text"
                         class="form-control"
-                        rows="3"
-                        v-model="newEditCriteria.rule"
-                        placeholder="Cập nhật tiêu chí ..."
-                      ></textarea>
+                        v-model="newEditCriteria.content"
+                        required
+                      />
                     </div>
                   </div>
                 </div>
@@ -192,6 +218,10 @@
 </template>
 
 <script>
+import Multiselect from "vue-multiselect";
+import "vue-multiselect/dist/vue-multiselect.min.css";
+import { criteriaChoices } from '~/components/criteria'
+
 export default {
   head() {
     return {
@@ -202,12 +232,15 @@ export default {
     const positionId = params.position
     return { positionId }
   },
+  components: {
+    Multiselect
+  },
   data() {
     return {
       title: '',
       items: [
         {
-          text: "Vị trí",
+          text: "Chân dung ứng viên",
           href: "/",
         },
         {
@@ -230,8 +263,20 @@ export default {
           label: "STT",
         },
         {
-          key: "rule",
+          key: "name",
           label: 'Tiêu chí'
+        },
+        {
+          key: 'priority',
+          label: 'Mức độ ưu tiên'
+        },
+        {
+          key: 'get_kind_display',
+          label: 'Loại tiêu chí'
+        },
+        {
+          key: 'content',
+          label: 'Nội dung'
         },
         {
           key: "created",
@@ -246,12 +291,32 @@ export default {
           label: "Tác vụ"
         }
       ],
+      content: '',
       currentCriteria: null,
+      fieldOptions: [],
+      nameOptions: [],
+      priorityOptions: [1, 2, 3, 4, 5],
+      kindOptions: [
+        'Phạm vi',
+        'Giá trị',
+        'Danh sách',
+      ],
+      kindChoices: {
+        'Phạm vi': 'A',
+        'Giá trị': 'B',
+        'Danh sách': 'C',
+      },
       newAddCriteria: {
-        rule: "",
+        name: '',
+        priority: '',
+        kind: '', 
+        content: ''
       },
       newEditCriteria: {
-        rule: ""
+        name: '',
+        priority: '',
+        kind: '', 
+        content: ''
       },
     };
   },
@@ -265,10 +330,58 @@ export default {
     rows() {
       return this.criteriaList.length;
     },
+    creteriaName() {
+      return this.newAddCriteria.name
+    },
+    creteriaName1() {
+      return this.newEditCriteria.name
+    },
+    creteriaKind() {
+      return this.newAddCriteria.kind
+    },
+    creteriaKind1() {
+      return this.newEditCriteria.kind
+    },
+    addDepartment() {
+      return this.newAddCriteria.department
+    },
+    department() {
+      return this.newAddCriteria.department
+    }
   },
   mounted() {
     // Set the initial number of items
     this.totalRows = this.items.length;
+  },
+  watch: {
+    creteriaName() {
+      if (this.creteriaName) {
+        let arr = this.fieldOptions.filter(item => item.name == this.creteriaName)
+        this.newAddCriteria.kind = arr[0].kind
+      }
+    },
+    creteriaName1() {
+      if (this.creteriaName1) {
+        let arr = this.fieldOptions.filter(item => item.name == this.creteriaName1)
+        this.newEditCriteria.kind = arr[0].kind
+      }
+    },
+    creteriaKind() {
+      if (this.creteriaKind == 'Phạm vi') {
+        this.content = 'Điền giá trị nhỏ nhất và giá trị lớn nhất của tiêu chí, cách nhau bởi dấu ;'
+      } else if (this.creteriaKind == 'Giá trị') {
+        this.content = 'Điền giá trị chính xác của tiêu chí'
+      } else if (this.creteriaKind == 'Danh sách') this.content = 'Điền các giá trị của tiêu chí, cách nhau bởi dấu ;'
+      else this.content = ''
+    },
+    creteriaKind1() {
+      if (this.creteriaKind1 == 'Phạm vi') {
+        this.content = 'Điền giá trị nhỏ nhất và giá trị lớn nhất của tiêu chí, cách nhau bởi dấu ;'
+      } else if (this.creteriaKind1 == 'Giá trị') {
+        this.content = 'Điền giá trị chính xác của tiêu chí'
+      } else if (this.creteriaKind1 == 'Danh sách') this.content = 'Điền các giá trị của tiêu chí, cách nhau bởi dấu ;'
+      else this.content = ''
+    }
   },
   methods: {
     /**
@@ -283,10 +396,16 @@ export default {
       this.currentCriteria = item;
     },
     resetAddModal() {
-      this.newAddCriteria.rule = "";
+      this.newAddCriteria.name = this.nameOptions[0]
+      this.newAddCriteria.priority = 1
+      this.newAddCriteria.kind = this.kindOptions[0]
+      this.newAddCriteria.content = ''
     },
     resetEditModal() {
-      this.newEditCriteria.rule = this.currentCriteria.rule;
+      this.newEditCriteria.name = this.currentCriteria.name
+      this.newEditCriteria.priority = this.currentCriteria.priority
+      this.newEditCriteria.kind = this.currentCriteria.get_kind_display
+      this.newEditCriteria.content = this.currentCriteria.content
     },
     async handleAddOK(bvModalEvt) {
       // Prevent modal from closing
@@ -309,7 +428,10 @@ export default {
     async handleAddSubmit() {
       try {
         let data = {
-          rule: this.newAddCriteria.rule,
+          name: this.newAddCriteria.name,
+          priority: this.newAddCriteria.priority,
+          kind: this.kindChoices[this.newAddCriteria.kind],
+          content: this.newAddCriteria.content,
           position: this.positionId
         }
         await this.$axios.post(
@@ -326,15 +448,31 @@ export default {
           icon: 'check'
         });
       } catch (error) {
-        this.$toast.error('Chức vụ đã tồn tại hoặc không hợp lệ!', {
-          icon: 'alert'
-        })
+        if (error.response.status == 400) {
+          let errors = error.response.data;
+          // Toast errors
+          for (let err in errors) {
+            this.$toast.error(err + " : " + errors[err], {
+              icon: 'alert'
+            });
+          }
+        } else {
+          this.$toast.error('Đã có lỗi xảy ra', {
+            icon: 'alert'
+          })
+        }
       }
     },
     async handleEditSubmit() {
       try {
         let url = "/api/services/criteria/" + this.currentCriteria.id + "/";
-        await this.$axios.patch(url, this.newEditCriteria);
+        let data = {
+          name: this.newEditCriteria.name,
+          priority: this.newEditCriteria.priority,
+          kind: this.kindChoices[this.newEditCriteria.kind],
+          content: this.newEditCriteria.content,
+        }
+        await this.$axios.patch(url, data);
 
         // Hide the modal munally
         this.$nextTick(() => {
@@ -345,9 +483,19 @@ export default {
           icon: 'check'
         });
       } catch (error) {
-        this.$toast.error('Chức vụ đã tồn tại hoặc không hợp lệ!', {
-         icon: 'alert'
-        })
+        if (error.response.status == 400) {
+          let errors = error.response.data;
+          // Toast errors
+          for (let err in errors) {
+            this.$toast.error(err + " : " + errors[err], {
+              icon: 'alert'
+            });
+          }
+        } else {
+          this.$toast.error('Đã có lỗi xảy ra', {
+            icon: 'alert'
+          })
+        }
       }
     },
     async handleDeleteSubmit() {
@@ -385,6 +533,15 @@ export default {
         let response = await this.$axios.get(url);
         this.criteriaList = response.data.criterias;
         this.title = response.data.name
+        let department = criteriaChoices.filter(item => item.department == response.data.department_name)
+        this.nameOptions = []
+        this.fieldOptions = []
+        if (department.length > 0) {
+          this.fieldOptions = department[0].fields
+          for (let field of department[0].fields) {
+            this.nameOptions.push(field.name)
+          }
+        }
       } catch (error) {
         if (error.response.status == 400) {
           let errors = error.response.data;

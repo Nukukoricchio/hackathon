@@ -180,13 +180,19 @@
       "text": "File Manager"
     },
     "candidate": {
-      "text": "Danh sách ứng viên"
+      "text": "Quản lý ứng viên"
+    },
+    "approve": {
+      "text": "Xét duyệt ứng viên"
     },
     "office": {
-      "text": "Danh sách văn phòng"
+      "text": "Văn phòng"
+    },
+    "department": {
+      "text": "Phòng ban"
     },
     "position": {
-      "text": "Vị trí tuyển dụng"
+      "text": "Chân dung ứng viên"
     },
     "custom": {
       "text": "Custom"

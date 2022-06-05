@@ -4,6 +4,7 @@ from apps.services.models import Position, Office
 
 
 class Candidate(models.Model):
+	position = models.ForeignKey(Position, on_delete=models.SET_NULL, related_name='candidates', null=True)
 	# Fields can't be extracted from CV
 	first_office = models.CharField(max_length=250, blank=True)
 	second_office = models.CharField(max_length=250, blank=True)
@@ -35,21 +36,26 @@ class Candidate(models.Model):
 	info_normalized_birthdate = models.CharField(max_length=20, blank=True)
 	# Addition fields
 	is_approved = models.BooleanField(default=False)
-	positions = models.ManyToManyField(Position,
-		through='CandidatePosition',
-		through_fields=('candidate', 'position'),
-		related_name='candidates',
-		blank=True
-	)
+	score = models.DecimalField(max_digits=7, decimal_places=3, default=0)
+	# positions = models.ManyToManyField(Position,
+	# 	through='CandidatePosition',
+	# 	through_fields=('candidate', 'position'),
+	# 	related_name='candidates',
+	# 	blank=True
+	# )
 
 	def __str__(self):
 		return self.info_email
 
+	@property
+	def position_name(self):
+		return self.position.name
 
-class CandidatePosition(models.Model):
-	candidate = models.ForeignKey(Candidate, on_delete=models.SET_NULL, null=True, related_name='c_positions')
-	position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, related_name='c_positions')
-	content = models.JSONField(null=True, blank=True)
+
+# class CandidatePosition(models.Model):
+# 	candidate = models.ForeignKey(Candidate, on_delete=models.SET_NULL, null=True, related_name='c_positions')
+# 	position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, related_name='c_positions')
+# 	content = models.JSONField(null=True, blank=True)
 
 
 class CvFile(models.Model):

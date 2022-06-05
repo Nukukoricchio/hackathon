@@ -182,8 +182,14 @@
     "candidate": {
       "text": "Candidate list"
     },
+    "approve": {
+      "text": "Approve candidate"
+    },
     "office": {
       "text": "Office list"
+    },
+    "department": {
+      "text": "Department list"
     },
     "position": {
       "text": "Vị trí tuyển dụng"

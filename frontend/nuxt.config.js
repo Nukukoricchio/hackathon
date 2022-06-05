@@ -20,7 +20,7 @@ export default {
   ** See https://nuxtjs.org/api/configuration-head
   */
   head: {
-    title: "Quản lí nhân sự - Yody",
+    title: "Quản lí ứng viên | Yody",
     htmlAttrs: {
       lang: 'en'
     },
@@ -31,7 +31,7 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/yody.jpg' }
+      { rel: 'icon', type: 'image/x-icon', href: '/icon.png' }
     ]
   },
   /*

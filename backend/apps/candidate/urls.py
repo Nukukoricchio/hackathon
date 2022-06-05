@@ -8,4 +8,5 @@ urlpatterns = [
 	path('submit/', views.CandidateSubmitView.as_view()),
 	path('upload/', views.CandidateUploadView.as_view()),
 	path('<int:pk>/', views.CandidateDetailView.as_view()),
+	path('rank/', views.CandidateRankView.as_view()),
 ]
