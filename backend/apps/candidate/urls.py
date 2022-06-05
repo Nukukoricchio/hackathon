@@ -9,4 +9,5 @@ urlpatterns = [
 	path('upload/', views.CandidateUploadView.as_view()),
 	path('<int:pk>/', views.CandidateDetailView.as_view()),
 	path('rank/', views.CandidateRankView.as_view()),
+	path('filter/', views.CandidateFilterView.as_view()),
 ]

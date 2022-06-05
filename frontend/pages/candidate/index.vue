@@ -35,6 +35,17 @@
           ></multiselect>
         </div>
       </div>
+      <div class="col">
+        <div class="mb-3">
+          <label for="cccd_date">Thời gian:</label>
+          <b-form-datepicker
+            id="cccd_date"
+            :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+            locale="vi"
+            v-model="date"
+          ></b-form-datepicker>
+        </div>
+      </div>
     </div>
     <div class="row">
       <div class="col-12">
@@ -98,6 +109,7 @@
                     alt='duaofaf'
                     class="avatar-xs rounded-circle me-2"
                   />
+                   {{ data.item.info_picture}}
                   <div
                     v-if="!data.item.info_picture"
                     class="avatar-xs d-inline-block me-2"
@@ -109,11 +121,6 @@
                     </div>
                   </div>
                   <nuxt-link :to="'/candidate/' + data.item.id" class="text-body">{{ data.item.info_email }}</nuxt-link>
-                </template>
-                <template v-slot:cell(role)="data">
-                  <ul>
-                    <li v-for="(r, index) in data.item.role" :key="index">{{ r.role_name }}</li>
-                  </ul>
                 </template>
                 <template v-slot:cell(action)="data">
                   <ul class="list-inline mb-0">
@@ -211,6 +218,14 @@ export default {
           label: 'Email'
         },
         {
+          key: "position_name",
+          label: 'Chân dung ứng tuyển'
+        },
+        {
+          key: "approved_name",
+          label: 'Trạng thái'
+        },
+        {
           key: "info_name",
           label: 'Họ và tên'
         },
@@ -256,6 +271,7 @@ export default {
   },
   async created() {
     await this.getCandidate();
+    await this.getOptions();
   },
   computed: {
     /**
@@ -269,6 +285,46 @@ export default {
     // Set the initial number of items
     this.totalRows = this.items.length;
   },
+  watch: {
+    async department() {
+      if (this.department) {
+        try {
+          this.position = null;
+          this.positionOptions = [];
+          let response = await this.$axios.get(
+            "/api/services/department/" + this.departmentToId[this.department] + "/"
+          );
+          for (let item of response.data.positions) {
+            this.positionOptions.push(item.name);
+          }
+          if (this.positionOptions.length > 0) this.position = this.positionOptions[0]
+        } catch (error) {
+          if (error.response.status == 400) {
+            let errors = error.response.data;
+            // Toast errors
+            for (let err in errors) {
+              this.$toast.error(err + " : " + errors[err], {
+                icon: "alert",
+              });
+            }
+          } else {
+            this.$toast.error("Đã có lỗi xảy ra", {
+              icon: "alert",
+            });
+          }
+        }
+      } else {
+        this.position = null;
+        this.positionOptions = [];
+      }
+    },
+    async position() {
+      await this.getFilter()
+    },
+    async state() {
+      await this.getFilter()
+    }
+  },
   methods: {
     /**
      * Search the table data with search input
@@ -280,6 +336,30 @@ export default {
     },
     getCurrentCandidate(item) {
       this.currentCandidate = item;
+    },
+    async getFilter() {
+      try {
+        let data = {}
+        if (this.position) data.position = this.position
+        if (this.state == 'Đã duyệt') data.is_approved = true
+        else if (this.state == 'Chưa duyệt') data.is_approved = false
+        let response = await this.$axios.post('/api/candidate/filter/', data)
+        this.candidateList = response.data
+      } catch (error) {
+        if (error.response.status == 400) {
+          let errors = error.response.data;
+          // Toast errors
+          for (let err in errors) {
+            this.$toast.error(err + " : " + errors[err], {
+              icon: "alert",
+            });
+          }
+        } else {
+          this.$toast.error("Đã có lỗi xảy ra", {
+            icon: "alert",
+          });
+        }
+      }
     },
     async resetAddModal() {
       await this.getOfficeOptions()
@@ -372,6 +452,32 @@ export default {
           this.$toast.error('Đã có lỗi xảy ra', {
             icon: 'alert'
           })
+        }
+      }
+    },
+    async getOptions() {
+      try {
+        this.departmentOptions = []
+        this.departmentToId = {}
+        let response = await this.$axios.get('/api/services/department/')
+        for (let item of response.data) {
+          this.departmentOptions.push(item.name)
+          this.departmentToId[item.name] = item.id
+        }
+        this.department = this.departmentOptions[0]
+      } catch (error) {
+        if (error.response.status == 400) {
+          let errors = error.response.data;
+          // Toast errors
+          for (let err in errors) {
+            this.$toast.error(err + " : " + errors[err], {
+              icon: "alert",
+            });
+          }
+        } else {
+          this.$toast.error("Đã có lỗi xảy ra", {
+            icon: "alert",
+          });
         }
       }
     },

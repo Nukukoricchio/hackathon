@@ -1,4 +1,4 @@
-# Quanlyduan Project
+# Hackathon Project
 
 
 ## Django Setting
@@ -6,7 +6,7 @@
 Clone Repo
 
 ```bash
-$ git clone https://github.com/cuongnq212/qlda.git
+$ https://github.com/Nukukoricchio/hackathon.git
 ```
 
 Install Packages:

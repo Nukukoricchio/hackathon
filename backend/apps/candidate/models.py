@@ -47,6 +47,12 @@ class Candidate(models.Model):
 		return self.position.name
 
 	@property
+	def approved_name(self):
+		if self.is_approved:
+			return 'Đã duyệt'
+		return 'Chưa duyệt'
+
+	@property
 	def gender_name(self):
 		if self.info_gender == 'male':
 			return 'Nam'

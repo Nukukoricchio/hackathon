@@ -189,3 +189,22 @@ class CandidateRankView(APIView):
 			return Response(status=status.HTTP_200_OK)
 
 		return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class CandidateFilterView(APIView):
+
+	def post(self, request, format=None):
+		position = request.data.get('position')
+		is_approved = request.data.get('is_approved')
+
+		if position and is_approved:
+			candidates = Candidate.objects.filter(position__name=position, is_approved=is_approved)
+		elif position and not is_approved:
+			candidates = Candidate.objects.filter(position__name=position)
+		elif not position and is_approved:
+			candidates = Candidate.objects.filter(is_approved=is_approved)
+		else:
+			candidates = Candidate.objects.all()
+
+		serializer = CandidateListSerializer(candidates, many=True)
+		return Response(serializer.data)

@@ -5,6 +5,8 @@ from .models import Candidate, CvFile
 
 class CandidateListSerializer(serializers.ModelSerializer):
 	gender_name = serializers.ReadOnlyField()
+	position_name = serializers.ReadOnlyField()
+	approved_name = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Candidate
