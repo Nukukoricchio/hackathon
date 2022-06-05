@@ -4,6 +4,7 @@ from .models import Candidate, CvFile
 
 
 class CandidateListSerializer(serializers.ModelSerializer):
+	gender_name = serializers.ReadOnlyField()
 
 	class Meta:
 		model = Candidate
@@ -30,6 +31,7 @@ class CvFileSerializer(serializers.ModelSerializer):
 
 
 class CandidateDetailSerializer(serializers.ModelSerializer):
+	gender_name = serializers.ReadOnlyField()
 	files = CvFileSerializer(many=True, read_only=True)
 
 	class Meta:

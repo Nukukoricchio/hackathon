@@ -62,7 +62,7 @@ def norm_gender(gender):
     for k, v in norm_dict.items():
         if gender in v:
             return k
-    return k
+    return ""
 
 
 def preprocessing(json_file: dict):
@@ -87,9 +87,3 @@ def preprocessing(json_file: dict):
             json_file["experience"][idx]["total_time"] = ""
     
     return json_file
-
-if __name__ == "__main__":
-    import json
-    json_file = json.load(open("Data/dumped_json/cv_40.json"))
-    json_file = preprocessing(json_file)
-    json.dump(json_file, open("cv_14_2.json", "w"), indent=4)

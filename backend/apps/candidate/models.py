@@ -29,7 +29,7 @@ class Candidate(models.Model):
 	edu_school_univ = models.CharField(max_length=300, blank=True)
 	edu_major = models.CharField(max_length=300, blank=True)
 	education = models.JSONField(null=True, blank=True)
-	others_education = models.CharField(max_length=300, blank=True)
+	others_education = models.TextField(blank=True)
 	others_career_objective = models.TextField(blank=True)
 	others_skills = models.TextField(blank=True)
 	others_profile = models.TextField(blank=True)
@@ -37,12 +37,7 @@ class Candidate(models.Model):
 	# Addition fields
 	is_approved = models.BooleanField(default=False)
 	score = models.DecimalField(max_digits=7, decimal_places=3, default=0)
-	# positions = models.ManyToManyField(Position,
-	# 	through='CandidatePosition',
-	# 	through_fields=('candidate', 'position'),
-	# 	related_name='candidates',
-	# 	blank=True
-	# )
+	content = models.JSONField(null=True, blank=True)
 
 	def __str__(self):
 		return self.info_email
@@ -51,11 +46,13 @@ class Candidate(models.Model):
 	def position_name(self):
 		return self.position.name
 
-
-# class CandidatePosition(models.Model):
-# 	candidate = models.ForeignKey(Candidate, on_delete=models.SET_NULL, null=True, related_name='c_positions')
-# 	position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, related_name='c_positions')
-# 	content = models.JSONField(null=True, blank=True)
+	@property
+	def gender_name(self):
+		if self.info_gender == 'male':
+			return 'Nam'
+		elif self.info_gender == 'female':
+			return 'Nữ'
+		return ''
 
 
 class CvFile(models.Model):

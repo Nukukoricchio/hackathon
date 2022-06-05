@@ -65,6 +65,8 @@ def process_cv(file):
 		candidate.others_skills = others_skills
 		candidate.others_profile = others_profile
 		candidate.info_normalized_birthdate = info_normalized_birthdate
+
+		candidate.content = extract_info
 		# Save candidate
 		candidate.save()
 		# New file
@@ -72,7 +74,9 @@ def process_cv(file):
 		cv_file.candidate = candidate
 		cv_file.save()
 
-	print('Doneee')
-	return candidate
+		print('Doneee')
+		return candidate
+
+	return 
 	    
 

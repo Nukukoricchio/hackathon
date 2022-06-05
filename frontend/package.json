@@ -48,6 +48,7 @@
     "vue-number-input-spinner": "^2.2.0",
     "vue-quill-editor": "^3.0.6",
     "vue-slide-bar": "^1.2.0",
+    "vue-spinner": "^1.0.4",
     "vue-string-filter": "^2.1.0",
     "vue-switches": "^2.0.1",
     "vue-tour": "^1.5.0",

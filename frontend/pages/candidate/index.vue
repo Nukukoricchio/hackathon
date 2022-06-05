@@ -24,7 +24,7 @@
           ></multiselect>
         </div>
       </div>
-      <!-- <div class="col">
+      <div class="col">
         <div class="mb-3">
           <label>Trạng thái:</label>
           <multiselect
@@ -34,7 +34,7 @@
             class="helo"
           ></multiselect>
         </div>
-      </div> -->
+      </div>
     </div>
     <div class="row">
       <div class="col-12">
@@ -219,7 +219,7 @@ export default {
           label: 'Số điện thoại'
         },
         {
-          key: "info_gender",
+          key: "gender_name",
           label: 'Giới tính'
         },
         {

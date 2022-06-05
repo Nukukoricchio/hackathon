@@ -245,10 +245,10 @@ export default {
 
         <nuxt-link to="/" class="logo logo-light text-center">
             <span class="logo-sm">
-                <img src="~/assets/images/yody.png" alt height="70" />
+                <img src="~/assets/images/yodyyy.png" alt height="70" />
             </span>
             <span class="logo-lg">
-                <img src="~/assets/images/yody.png" alt height="70" />
+                <img src="~/assets/images/yodyyy.png" alt height="70" />
             </span>
         </nuxt-link>
     </div>

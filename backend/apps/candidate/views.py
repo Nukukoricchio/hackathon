@@ -8,6 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
 from django.core.files.base import ContentFile
+import torch
 
 from .models import Position, Candidate
 from .serializers import CandidateListSerializer, CandidateSubmitSerializer, CandidateDetailSerializer
@@ -84,44 +85,102 @@ class CandidateRankView(APIView):
 
 	def post(self, request, format=None):
 		position = request.data.get('position')
-		if data:
+		if position:
 			position = get_object_or_404(Position, name=position)
+			device = 'cpu' if not torch.cuda.is_available() else 'cuda'
 			if position.department_name == 'Phòng IT':
-				sample_filter = {
-			        "req_gender": {
-			            "gender": "male",
-			            "priority": "5"
-			        },
-			        "req_position": {
-			            "position": "Software Engineer",
-			            "priority": "4"
-			        },
-			        "req_seniority": {
-			            "seniority": "Senior",
-			            "priority": "3",
-			        },
-			        "req_age": {
-			            "min": 18,
-			            "max": 29,
-			            "priority": "1"
-			        },
-			        "req_skills": {
-			            "skills": ["English", "Planning", "API"],
-			            "priority": "2"
-			        },
-			        "req_company": {
-			            "company": ["Google", "Microsoft", "Facebook"],
-			            "priority": "5"
-			        },
-			        "req_university": {
-			            "university": ["Harvard", "Stanford", "MIT"],
-			            "priority": "4"
-			        }
-			    }
-				ranker = ITRanker(sample_filter, device="cuda:0")
-				cv_list = [json.load(open("cv_14.json"))] * 100
-				print([ranked[1] for ranked in ranker.rank(cv_list)])
-			    
+				criterias = position.criterias.all()
+				sample_filter = {}
+				for criteria in criterias:
+					if criteria.name == 'Giới tính':
+						if criteria.content == 'Nam':
+							gender = 'male'
+						elif criteria.content == 'Nữ':
+							gender = 'female'
+						else:
+							gender = ''
+						sample_filter["req_gender"] = {
+						    "gender": gender,
+						    "priority": criteria.priority
+						}
+					elif criteria.name == "Trình độ":
+						sample_filter["req_seniority"] = {
+						    "seniority": criteria.content,
+			                "priority": criteria.priority,
+						}
+					elif criteria.name == 'Tuổi':
+						sample_filter["req_age"] = {
+						    "min": int(criteria.content.split(';')[0]),
+						    "max": int(criteria.content.split(';')[1]),
+			                "priority": criteria.priority,
+						}
+					elif criteria.name == "Kỹ năng":
+						sample_filter["req_skills"] = {
+						    "skills": criteria.content.split(';'),
+			                "priority": criteria.priority,
+						}
+					elif criteria.name == "Công ty":
+						sample_filter["req_company"] = {
+						    "company": criteria.content.split(';'),
+			                "priority": criteria.priority,
+						}
+					elif criteria.name == "Trường đại học":
+						sample_filter["req_university"] = {
+						    "university": criteria.content.split(';'),
+			                "priority": criteria.priority,
+						}
+				sample_filter["req_position"] = {
+				    "position": position.name,
+				    "priority": 4
+				}
+				# sample_filters = {
+				#     "req_gender": {
+				#         "gender": "male",
+				#         "priority": "5"
+				#     },
+				#     "req_position": {
+				#         "position": "Software Engineer",
+				#         "priority": "4"
+				#     },
+				#     "req_seniority": {
+				#         "seniority": "Senior",
+				#         "priority": "3",
+				#     },
+				#     "req_age": {
+				#         "min": 18,
+				#         "max": 29,
+				#         "priority": "1"
+				#     },
+				#     "req_skills": {
+				#         "skills": ["English", "Planning", "API"],
+				#         "priority": "2"
+				#     },
+				#     "req_company": {
+				#         "company": ["Google", "Microsoft", "Facebook"],
+				#         "priority": "5"
+				#     },
+				#     "req_university": {
+				#         "university": ["Harvard", "Stanford", "MIT"],
+				#         "priority": "4"
+				#     }
+				# }
+				# print('s1', sample_filter)
+				# print('s2', sample_filters)
+				ranker = ITRanker(sample_filter, device=device)
+				candidates = position.candidates.all()
+				if len(candidates) == 0:
+					return Response(status=status.HTTP_200_OK)
+
+				cv_list = [candidate.content for candidate in candidates]
+				scores = ranker.rank(cv_list)
+				print('scores ', scores)
+				for i in range(len(candidates)):
+					candidates[i].score = scores[i]
+					candidates[i].save()
+				candidates = candidates.order_by('-score')
+				serializer = CandidateListSerializer(candidates, many=True)
+				return Response(serializer.data, status=status.HTTP_200_OK)
+
 			elif position.department_name == 'Phòng Kinh doanh':
 				pass
 			else:
